@@ -13,7 +13,7 @@ Upload these files to a new GitHub repo or directly to Render:
 - **Build Command**: `pip install -r requirements.txt`
 - **Start Command**: `gunicorn flask_app:app`
 - **Environment Variables**: 
-  - `OPENROUTER_API_KEY` = `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`
+  - `OPENROUTER_API_KEY` = `your-openrouter-api-key-here`
 
 ### Step 3: Access Your Website
 Your live website will be at: `https://yourapp.onrender.com`
@@ -21,7 +21,7 @@ Your live website will be at: `https://yourapp.onrender.com`
 ## Local Development
 ```bash
 # Set environment variable
-set OPENROUTER_API_KEY=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
+set OPENROUTER_API_KEY=your-openrouter-api-key-here
 
 # Run locally
 python flask_app.py

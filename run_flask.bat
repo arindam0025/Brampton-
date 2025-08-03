@@ -3,7 +3,7 @@ echo Starting Brampton Finance AI Flask App...
 echo.
 
 REM Set the API key environment variable
-set OPENROUTER_API_KEY=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
+set OPENROUTER_API_KEY=your-api-key-here
 
 REM Install requirements if needed
 pip install flask gunicorn requests

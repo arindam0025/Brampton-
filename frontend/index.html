@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 Brampton - Finance AI Chat</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.3);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    
+    /* Modern glassmorphism effect */
+    .glass-effect {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Modern button hover effects */
+    .modern-button {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+    
+    .modern-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    
+    /* Message bubble animations */
+    .message-bubble {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Animation for typing indicator */
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+    
+    .animate-bounce {
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    
+    /* Enhanced focus styles */
+    textarea:focus, input:focus, button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      border-color: #3b82f6;
+    }
+    
+    /* Smooth transitions */
+    * {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Icon animations */
+    .icon-pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
+
+    function ChatApp() {
+      const [messages, setMessages] = useState([
+        { sender: "Brampton", text: "Hello! I'm Brampton, your finance AI assistant. Ask me anything about investing, markets, economics, or financial planning!" }
+      ]);
+      const [inputValue, setInputValue] = useState("");
+      const [isLoading, setIsLoading] = useState(false);
+      const messagesEndRef = useRef(null);
+
+      const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+
+      useEffect(() => {
+        scrollToBottom();
+      }, [messages]);
+
+      const sendMessage = async () => {
+        if (!inputValue.trim() || isLoading) return;
+
+        const userMessage = inputValue.trim();
+        setInputValue("");
+        setMessages(prev => [...prev, { sender: "You", text: userMessage }]);
+        setIsLoading(true);
+
+        try {
+          const response = await fetch("http://localhost:8000/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage })
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          setMessages(prev => [...prev, { sender: "Brampton", text: data.response }]);
+        } catch (error) {
+          console.error("Error:", error);
+          setMessages(prev => [...prev, { 
+            sender: "Brampton", 
+            text: "Sorry, I'm having trouble connecting to the server. Please make sure the backend is running on localhost:8000 and try again." 
+          }]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      const handleKeyPress = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      };
+
+      return (
+        <div className="flex flex-col h-screen" style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}>
+          {/* Header */}
+          <div className="glass-effect border-b border-blue-500/20 p-4">
+            <div className="max-w-4xl mx-auto flex items-center">
+              <div className="w-10 h-10 modern-button rounded-xl flex items-center justify-center mr-4 icon-pulse">
+                <i className="fas fa-chart-line text-white text-lg"></i>
+              </div>
+              <h1 className="text-2xl font-bold gradient-text">Brampton Finance AI</h1>
+              <div className="ml-auto flex items-center space-x-3">
+                <div className="flex items-center space-x-2 text-sm text-blue-300">
+                  <i className="fas fa-robot text-blue-400"></i>
+                  <span>Powered by AI</span>
+                </div>
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="max-w-4xl mx-auto space-y-6">
+              {messages.map((message, index) => (
+                <div key={index} className={`flex ${message.sender === "You" ? "justify-end" : "justify-start"} message-bubble`}>
+                  <div className={`max-w-xs lg:max-w-md px-5 py-3 rounded-2xl shadow-lg ${
+                    message.sender === "You" 
+                      ? "modern-button text-white" 
+                      : "glass-effect text-white border border-blue-500/20"
+                  }`}>
+                    <div className="flex items-center space-x-2 text-xs opacity-75 mb-2">
+                      {message.sender === "You" ? (
+                        <i className="fas fa-user text-blue-200"></i>
+                      ) : (
+                        <i className="fas fa-robot text-blue-400"></i>
+                      )}
+                      <span>{message.sender}</span>
+                    </div>
+                    <div className="whitespace-pre-wrap leading-relaxed">{message.text}</div>
+                  </div>
+                </div>
+              ))}
+              
+              {isLoading && (
+                <div className="flex justify-start message-bubble">
+                  <div className="glass-effect text-white max-w-xs lg:max-w-md px-5 py-3 rounded-2xl shadow-lg border border-blue-500/20">
+                    <div className="flex items-center space-x-2 text-xs opacity-75 mb-2">
+                      <i className="fas fa-robot text-blue-400"></i>
+                      <span>Brampton</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-300">Thinking</span>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
+
+          {/* Input */}
+          <div className="glass-effect border-t border-blue-500/20 p-6">
+            <div className="max-w-4xl mx-auto flex space-x-4">
+              <div className="flex-1 relative">
+                <textarea
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ask about stocks, investments, market trends..."
+                  className="w-full p-4 glass-effect text-white rounded-2xl border border-blue-500/30 focus:border-blue-400 focus:outline-none resize-none placeholder-blue-300/70"
+                  rows="1"
+                  disabled={isLoading}
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <i className="fas fa-microphone text-blue-400/50 hover:text-blue-400 cursor-pointer transition-colors"></i>
+                </div>
+              </div>
+              <button
+                onClick={sendMessage}
+                disabled={!inputValue.trim() || isLoading}
+                className="px-8 py-4 modern-button text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {isLoading ? (
+                  <i className="fas fa-spinner animate-spin"></i>
+                ) : (
+                  <>
+                    <span>Send</span>
+                    <i className="fas fa-paper-plane"></i>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<ChatApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# Ollama Model Configuration for Brampton Finance AI
+# This file contains configuration for different AI models
+
+models:
+  local_ollama:
+    name: "llama3"
+    endpoint: "http://localhost:11434/api/generate"
+    description: "Local Ollama Llama 3 model"
+    
+  openrouter:
+    name: "meta-llama/llama-3.1-8b-instruct:free"
+    endpoint: "https://openrouter.ai/api/v1/chat/completions"
+    description: "OpenRouter Llama 3.1 8B Instruct (Free tier)"
+
+# Finance-specific system prompts
+prompts:
+  finance_expert: |
+    You are Brampton, a finance AI chatbot and expert advisor. You specialize in:
+    - Stock market analysis and investment strategies
+    - Personal finance and budgeting advice
+    - Economic trends and market insights
+    - Cryptocurrency and alternative investments
+    - Retirement planning and wealth management
+    - Risk assessment and portfolio optimization
+    
+    Always provide actionable, accurate, and well-reasoned advice. 
+    Keep responses concise but comprehensive. 
+    Include relevant disclaimers when giving investment advice.
+
+# Model settings
+settings:
+  temperature: 0.7
+  max_tokens: 1000
+  timeout: 30

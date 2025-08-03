@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brampton AI - Finance Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1>Brampton AI</h1>
+                </div>
+                <p class="tagline">Your Advanced Finance Assistant</p>
+            </div>
+        </header>
+
+        <!-- Main Chat Interface -->
+        <main class="main-content">
+            <div class="chat-container">
+                <!-- Welcome Message -->
+                {% if not query %}
+                <div class="welcome-section">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>Welcome to Brampton AI!</h2>
+                    <p>I'm your intelligent finance assistant powered by both GPT-4 and Claude. Ask me anything about:</p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Investment Analysis</span>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-coins"></i>
+                            <span>Financial Planning</span>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Risk Management</span>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-building"></i>
+                            <span>Corporate Finance</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Chat Messages -->
+                {% if query %}
+                <div class="chat-messages">
+                    <!-- User Message -->
+                    <div class="message user-message">
+                        <div class="message-avatar user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-author">You</span>
+                                <span class="message-time">Just now</span>
+                            </div>
+                            <div class="message-text">{{ query }}</div>
+                        </div>
+                    </div>
+
+                    <!-- AI Responses -->
+                    {% for model, reply in answers.items() %}
+                    <div class="message ai-message">
+                        <div class="message-avatar ai-avatar {% if model == 'ChatGPT' %}gpt-avatar{% else %}claude-avatar{% endif %}">
+                            {% if model == 'ChatGPT' %}
+                                <i class="fas fa-brain"></i>
+                            {% else %}
+                                <i class="fas fa-atom"></i>
+                            {% endif %}
+                        </div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-author">Brampton AI ({{ model }})</span>
+                                <span class="message-time">Just now</span>
+                            </div>
+                            <div class="message-text">{{ reply }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-container">
+                <form method="POST" class="chat-form">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            name="query" 
+                            placeholder="Ask me about finance, investments, risk management..." 
+                            required
+                            class="chat-input"
+                            autocomplete="off"
+                        >
+                        <button type="submit" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <p class="input-disclaimer">
+                    Brampton AI combines insights from multiple AI models for comprehensive financial guidance.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-focus input field
+        document.querySelector('.chat-input').focus();
+        
+        // Show loading state on form submit
+        document.querySelector('.chat-form').addEventListener('submit', function() {
+            const button = document.querySelector('.send-button');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            button.disabled = true;
+        });
+    </script>
+</body>
+</html>
